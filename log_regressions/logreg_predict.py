@@ -2,11 +2,20 @@
 
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 import os
 import sys
 path = os.path.join(os.path.dirname(__file__), '..', 'tools')
 sys.path.insert(1, path)
 from my_logistic_regression import MyLogisticRegression as MyLR
+
+
+# global parameters
+features = ['Astronomy',
+            'Herbology',
+            'Defense Against the Dark Arts',
+            'Charms']
 
 
 def main():
@@ -24,18 +33,6 @@ def main():
     # check if empty
     if df.empty:
         print("Error: empty file")
-        exit(1)
-
-    # global parameters
-    features = ['Astronomy',
-                'Herbology',
-                'Defense Against the Dark Arts',
-                'Charms']
-    # clean data
-    try:
-        df = df.dropna(subset=features)
-    except:
-        print("Error: wrong format for dataset")
         exit(1)
 
     # read parameters csv
@@ -71,7 +68,9 @@ def main():
     models = []
     houses = ['Gryffindor', 'Slytherin', 'Ravenclaw', 'Hufflepuff']
     for house in houses:
-        thetas = np.array(parameters[parameters['house'] == house].iloc[0][1:]).reshape(-1, 1)
+        thetas = np.array(
+            parameters[parameters['house'] == house].iloc[0][1:]
+            ).astype(np.float64).reshape(-1, 1)
         model = MyLR(thetas)
         models.append(model)
 
@@ -82,12 +81,25 @@ def main():
         max_proba = 0
         max_proba_index = 0
         for j in range(len(models)):
-            proba = models[j].predict_(dataset[i])
+            line = dataset[i].reshape(1, -1)
+            proba = models[j].predict_(line)
             if proba > max_proba:
                 max_proba = proba
                 max_proba_index = j
         print(f'{i},{houses[max_proba_index]}', file=output_file)
+        # add the house to the dataset
+        df.loc[i, 'Hogwarts House'] = houses[max_proba_index]
 
     output_file.close()
+
+    # plot the results
+    try:
+        sns.pairplot(df, hue='Hogwarts House', vars=features)
+        plt.show()
+    except Exception as e:
+        print(f'Error: {e}')
+        exit(1) 
+        
+
 
 main()

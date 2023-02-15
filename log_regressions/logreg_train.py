@@ -54,7 +54,7 @@ def main():
     for house in df['Hogwarts House'].unique():
         # create a model for each house (one-vs-all)
         thetas = np.array([0, 0, 0, 0, 0]).reshape(-1, 1)
-        model = MyLR(thetas, alpha=0.0005, max_iter=100000)
+        model = MyLR(thetas, alpha=0.00005, max_iter=100000)
         # train the model
         dataset = np.array(df[features]).reshape(-1, 4)
         house_or_not_list = []
@@ -65,10 +65,10 @@ def main():
         # save the model
         models.append(model)
         # print the model
-        print(f'{house},{model.theta[0]},{model.theta[1]},{model.theta[2]},'
-              f'{model.theta[3]},{model.theta[4]}', file=output_file)
-
+        print(f'{house},{model.theta[0][0]},{model.theta[1][0]},{model.theta[2][0]},'
+              f'{model.theta[3][0]},{model.theta[4][0]}', file=output_file)
 
     output_file.close()
+    
 
 main()

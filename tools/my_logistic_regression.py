@@ -156,7 +156,8 @@ class MyLogisticRegression():
         try:
             x = MyLogisticRegression.add_intercept(x)
             return MyLogisticRegression.sigmoid_(x @ self.theta)
-        except:
+        except Exception as e:
+            print(f'Predict error: {e}')
             return None
 
     def loss_elem_(self, y, y_hat):
