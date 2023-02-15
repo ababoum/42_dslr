@@ -14,7 +14,7 @@ from TinyStatistician import TinyStatistician as ts
 
 # check args
 if len(sys.argv) != 2:
-    print("Usage: python3 scatter_plot.py dataset.csv")
+    print("Usage: python3 scatter_plot.py dataset_train.csv")
     exit(1)
 
 # read csv

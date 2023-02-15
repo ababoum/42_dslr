@@ -14,7 +14,7 @@ from Scaler import Scaler as sc
 
 # check args
 if len(sys.argv) != 2:
-    print("Usage: python3 describe.py histogram.csv")
+    print("Usage: python3 histogram.py dataset_train.csv")
     exit(1)
 
 # read csv
