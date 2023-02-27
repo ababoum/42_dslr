@@ -44,74 +44,41 @@ courses = ['Arithmancy',
            'Care of Magical Creatures',
            'Charms',
            'Flying']
-houses = ['Gryffindor', 'Slytherin', 'Ravenclaw', 'Hufflepuff']
 
-medians = {}
-counts = {}
-means = {}
+### PLOT ALL HISTOGRAMS ON THE SAME WINDOW, DIFFERENT FIGURES ###
 
-df = df.dropna(subset=['Hogwarts House'])
+fig = plt.figure()
+fig.set_size_inches(15, 25)
+gs = fig.add_gridspec(13, hspace=0)
+axs = gs.subplots(sharex=True, sharey=True)
+fig.suptitle('Courses histograms')
+for i, feature in enumerate(courses):
+    try:   
+        data = df[feature].dropna()
+        # Normalize data
+        data = sc.zscore(np.array(data.values))
+        axs[i].hist(data, bins=10, label=feature, alpha=0.5)
+        axs[i].legend()
+    except KeyError as e:
+        print(
+            "Error: could not read features. Check that all features are present in the dataset.")
+        print(f'Source: {e}')
+        exit(1)
+plt.show()
 
-# compute medians
+### PLOT ALL HISTOGRAMS ON THE SAME WINDOW, SAME FIGURE ###
+plt.figure(figsize=(15, 25))
 for feature in courses:
-    medians[feature] = {}
-    counts[feature] = {}
-    means[feature] = {}
-    for house in houses:
-        try:
-            house_data = df[feature][df['Hogwarts House'] == house]
-            data = np.array(pd.to_numeric(
-                house_data, errors='coerce').dropna().astype(float))
-            # normalize data to improve readability of the graph
-            data = sc().zscore(data)
-        except KeyError as e:
-            print(
-                "Error: could not read features. Check that all features are present in the dataset.")
-            print(f'Source: {e}')
-            exit(1)
-        # if we need to drop negative values
-        # data = data[data >= 0]
-
-        for i in data:
-            if not isinstance(i, (int, float)):
-                print(i)
-                print("Error: invalid data")
-                exit(1)
-        medians[feature][house] = stats.median(data)
-        counts[feature][house] = len(data)
-        means[feature][house] = stats.mean(data)
-
-
-# bar plot for each feature and show the graphs on same window
-
-def plot_stat(stat, ylabel):
-    plt.figure(figsize=(25, 15))
-
-    Gryffindor = []
-    Slytherin = []
-    Ravenclaw = []
-    Hufflepuff = []
-
-    for feature in courses:
-        Gryffindor.append(stat[feature]['Gryffindor'])
-        Slytherin.append(stat[feature]['Slytherin'])
-        Ravenclaw.append(stat[feature]['Ravenclaw'])
-        Hufflepuff.append(stat[feature]['Hufflepuff'])
-    
-    X_axis = np.arange(len(courses))
-    
-    plt.bar(X_axis - 0.4, Gryffindor, 0.2, label = 'Gryffindor', color='red')
-    plt.bar(X_axis - 0.2, Slytherin, 0.2, label = 'Slytherin', color='green')
-    plt.bar(X_axis + 0.0, Ravenclaw, 0.2, label = 'Ravenclaw', color='dodgerblue')
-    plt.bar(X_axis + 0.2, Hufflepuff, 0.2, label = 'Hufflepuff', color='goldenrod')
-    
-    plt.xticks(X_axis, courses, rotation=45)
-    plt.xlabel("Courses")
-    plt.ylabel(ylabel)
-    plt.title("Score distribution between houses for each course")
-    plt.gcf().subplots_adjust(bottom=0.2)
-    plt.legend()
-    plt.show()
-
-plot_stat(medians, "Median scores")
-plot_stat(means, "Mean scores")
+    try:   
+        data = df[feature].dropna()
+        # Normalize data
+        plt.title('Courses histograms')
+        data = sc.zscore(np.array(data.values))
+        plt.hist(data, bins=10, label=feature, alpha=0.5)
+        plt.legend()
+    except KeyError as e:
+        print(
+            "Error: could not read features. Check that all features are present in the dataset.")
+        print(f'Source: {e}')
+        exit(1)
+plt.show()
